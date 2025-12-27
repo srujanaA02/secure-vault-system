@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   blockchain:
-    image: node:18-alpine
+    image: node:20-alpine
     working_dir: /app
     volumes:
       - .:/app
@@ -13,7 +13,7 @@ services:
       - vault-network
 
   deployer:
-    image: node:18-alpine
+    image: node:20-alpine
     working_dir: /app
     depends_on:
       - blockchain
@@ -24,15 +24,15 @@ services:
     command: >
       sh -c "
         echo 'Waiting for blockchain to be ready...'
-        sleep 5
+        sleep 10
         echo 'Installing dependencies...'
-        npm install
+        npm ci
         echo 'Compiling contracts...'
         npx hardhat compile
         echo 'Deploying contracts...'
         npx hardhat run scripts/deploy.js --network localhost
         echo 'Deployment complete!'
-        sleep infinity
+        tail -f /dev/null
       "
     networks:
       - vault-network
